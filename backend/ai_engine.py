@@ -1,66 +1,55 @@
+import os
+from dotenv import load_dotenv
 from groq import Groq
 
-# TEMPORARY: paste your Groq API key here
+load_dotenv()
+
 client = Groq(
-    api_key="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"
+    api_key=os.getenv("GROQ_API_KEY")
 )
 
-# Stores last resume analysis (agent memory)
 last_resume_context = ""
 
-def analyze_resume(resume_text: str):
+def analyze_resume(resume_text):
     global last_resume_context
 
-    try:
-        prompt = f"""
-You are an intelligent career planning AI agent.
+    prompt = f"""
+You are a career guidance AI.
 
 Analyze the resume and provide:
-- Technical skills identified
+- Technical skills
 - Skill gaps
 - Suitable career roles
 - Learning recommendations
 
 Resume:
-{resume_text[:3000]}
+{resume_text}
 """
 
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}]
-        )
+    response = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[{"role": "user", "content": prompt}]
+    )
 
-        last_resume_context = response.choices[0].message.content
-
-        return {"analysis": last_resume_context}
-
-    except Exception as e:
-        return {"error": str(e)}
+    last_resume_context = response.choices[0].message.content
+    return {"analysis": last_resume_context}
 
 
-def chat_with_agent(user_question: str):
-    try:
-        prompt = f"""
-You are a career guidance AI agent.
-
-Here is the resume analysis context:
+def chat_agent(question):
+    prompt = f"""
+Resume context:
 {last_resume_context}
 
-Now answer the user's question clearly and helpfully.
-
 User question:
-{user_question}
+{question}
 """
 
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}]
-        )
+    response = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[{"role": "user", "content": prompt}]
+    )
 
-        return {"reply": response.choices[0].message.content}
-
-    except Exception as e:
-        return {"error": str(e)}
+    return {"reply": response.choices[0].message.content}
 
 
 
