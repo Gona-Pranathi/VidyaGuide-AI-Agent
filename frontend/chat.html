@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Career Chat Agent</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="card">
+
+        <h1>Career Chat Agent</h1>
+        <p class="subtitle">
+            Ask career-related questions based on your resume analysis
+        </p>
+
+        <!-- Chat Input Section -->
+        <div class="chat-box">
+            <input
+                type="text"
+                id="chatInput"
+                placeholder="Ask a career question..."
+            >
+            <button onclick="sendChat()">Ask</button>
+        </div>
+
+        <!-- Chat Output Section -->
+        <div class="analysis-content">
+            <div id="chatReply">
+                Agent replies will appear here.
+            </div>
+        </div>
+
+        <button onclick="goBack()">← Back to Analysis</button>
+
+    </div>
+</div>
+
+<script>
+function sendChat() {
+    const question = document.getElementById("chatInput").value;
+
+    if (!question) {
+        alert("Please enter a question.");
+        return;
+    }
+
+    document.getElementById("chatReply").innerText =
+        "Thinking... please wait.";
+
+    fetch("http://127.0.0.1:8000/chat/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: question })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("chatReply").innerText =
+            data.reply || "No response received.";
+    })
+    .catch(() => {
+        document.getElementById("chatReply").innerText =
+            "Error connecting to the chat agent.";
+    });
+}
+
+function goBack() {
+    window.location.href = "result.html";
+}
+</script>
+
+</body>
+</html>
+
+
+
