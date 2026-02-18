@@ -1,33 +1,25 @@
-
-
 async function analyzeResume() {
-  const fileInput = document.getElementById("resumeFile");
-  const file = fileInput.files[0];
+    const fileInput = document.getElementById("resumeFile");
 
-  if (!file) {
-    alert("Please select a resume PDF first.");
-    return;
-  }
+    if (fileInput.files.length === 0) {
+        alert("Please upload a resume PDF first.");
+        return;
+    }
 
-  const formData = new FormData();
-  formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-  try {
     const response = await fetch("http://127.0.0.1:8000/analyze-resume/", {
-      method: "POST",
-      body: formData
+        method: "POST",
+        body: formData
     });
 
     const data = await response.json();
 
-    // Save analysis to browser storage
-    localStorage.setItem("resumeAnalysis", data.analysis);
-
-    // Redirect to result page
-    window.location.href = "result.html";
-
-  } catch (error) {
-    alert("Error connecting to backend.");
-    console.error(error);
-  }
+    if (data.analysis) {
+        sessionStorage.setItem("analysisResult", data.analysis);
+        window.location.href = "result.html";
+    } else {
+        alert("Error analyzing resume.");
+    }
 }
