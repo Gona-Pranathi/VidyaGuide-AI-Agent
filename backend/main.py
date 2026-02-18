@@ -29,5 +29,8 @@ async def analyze_resume_api(file: UploadFile = File(...)):
 
 @app.post("/chat/")
 async def chat_api(payload: dict):
-    reply = chat_with_agent(payload.get("message", ""))
+    question = payload.get("question", "")
+    resume_analysis = payload.get("resume_analysis", None)
+
+    reply = chat_with_agent(question, resume_analysis)
     return {"reply": reply}

@@ -27,22 +27,35 @@
 
 <script>
 function sendChat() {
-    const question = document.getElementById("chatInput").value;
+    const question = document.getElementById("chatInput").value.trim();
+    const analysis = sessionStorage.getItem("analysisResult");  // 👈 HERE
 
     if (!question) {
         alert("Please enter a question.");
         return;
     }
 
+    if (!analysis) {
+        alert("Resume analysis not found. Please analyze your resume first.");
+        return;
+    }
+
     fetch("http://127.0.0.1:8000/chat/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question })
+        body: JSON.stringify({
+            question: question,
+            resume_analysis: analysis
+        })
     })
     .then(res => res.json())
     .then(data => {
         document.getElementById("chatReply").textContent =
-            data.reply || JSON.stringify(data, null, 2);
+            data.reply || "No response from agent.";
+    })
+    .catch(() => {
+        document.getElementById("chatReply").textContent =
+            "Error connecting to backend.";
     });
 }
 

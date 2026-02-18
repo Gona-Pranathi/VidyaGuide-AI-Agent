@@ -31,17 +31,24 @@ Resume:
     return response.choices[0].message.content
 
 
-def chat_with_agent(message: str) -> str:
+def chat_with_agent(message: str, resume_analysis: str | None = None) -> str:
+    system_prompt = "You are VidyaGuide AI Chat Agent."
+
+    if resume_analysis:
+        system_prompt += (
+            "\nUse the following resume analysis to give personalized answers:\n"
+            + resume_analysis
+        )
+
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[
-            {"role": "system", "content": "You are VidyaGuide AI Chat Agent."},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": message}
         ]
     )
 
     return response.choices[0].message.content
-
 
 
 
