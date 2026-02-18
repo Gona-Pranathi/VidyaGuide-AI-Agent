@@ -4,15 +4,10 @@ from groq import Groq
 
 load_dotenv()
 
-client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
-)
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-last_resume_context = ""
 
-def analyze_resume(resume_text):
-    global last_resume_context
-
+def analyze_resume(resume_text: str) -> str:
     prompt = f"""
 You are a career guidance AI.
 
@@ -20,36 +15,32 @@ Analyze the resume and provide:
 - Technical skills
 - Skill gaps
 - Suitable career roles
-- Learning recommendations
+- Recommended learning paths
 
 Resume:
 {resume_text}
 """
 
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[{"role": "user", "content": prompt}]
+        model="llama-3.1-8b-instant",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
     )
 
-    last_resume_context = response.choices[0].message.content
-    return {"analysis": last_resume_context}
+    return response.choices[0].message.content
 
 
-def chat_agent(question):
-    prompt = f"""
-Resume context:
-{last_resume_context}
-
-User question:
-{question}
-"""
-
+def chat_with_agent(message: str) -> str:
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[{"role": "user", "content": prompt}]
+        model="llama-3.1-8b-instant",
+        messages=[
+            {"role": "system", "content": "You are VidyaGuide AI Chat Agent."},
+            {"role": "user", "content": message}
+        ]
     )
 
-    return {"reply": response.choices[0].message.content}
+    return response.choices[0].message.content
 
 
 
