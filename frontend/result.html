@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Career Analysis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="card">
+
+        <h1>AI Career Analysis</h1>
+        <p class="subtitle">
+            Personalized insights generated from your resume using Generative AI
+        </p>
+
+        <!-- Analysis Output Section -->
+        <div class="analysis-content">
+            <div id="result">
+                Loading analysis...
+            </div>
+        </div>
+
+        <button onclick="goToChat()">💬 Talk to Career Agent</button>
+        <button onclick="goBack()">← Analyze Another Resume</button>
+
+    </div>
+</div>
+
+<script>
+try {
+    const resultDiv = document.getElementById("result");
+    const analysisText = sessionStorage.getItem("analysisResult");
+
+    if (!analysisText) {
+        resultDiv.innerText =
+            "No analysis found. Please upload a resume first.";
+    } else {
+        resultDiv.innerText = analysisText;
+    }
+} catch (e) {
+    alert("Error loading analysis.");
+}
+
+function goToChat() {
+    window.location.href = "chat.html";
+}
+
+function goBack() {
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
+
+
+
+
